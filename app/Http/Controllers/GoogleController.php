@@ -26,7 +26,7 @@ class GoogleController extends Controller
                 'no_hp' => null,
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'), // default password
-                'role_id' => 2,
+                'role_id' => 4,
                 'avatar' => $googleUser->getAvatar(),
                 'bio' => 'Pembeli'
             ]);
