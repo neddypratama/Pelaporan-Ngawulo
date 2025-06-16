@@ -48,40 +48,46 @@ new class extends Component {
     public function delete($id): void
     {
         $kategori = Role::findOrFail($id);
-        logActivity('deleted', 'Menghapus role ' . $kategori->name);
+
+        if ($kategori->users()->count() > 0) {
+            $this->error("Tidak bisa menghapus role '$kategori->name' karena masih digunakan oleh pengguna.", position: 'toast-top');
+            return;
+        }
+
+        logActivity('deleted', 'Menghapus data role ' . $kategori->name);
         $kategori->delete();
-        $this->warning("Role $kategori->name akan dihapus", position: 'toast-top');
+        $this->warning("Role $kategori->name telah dihapus", position: 'toast-top');
     }
-    
+
     public function create(): void
     {
         $this->newRoleName = ''; // Reset input sebelum membuka modal
         $this->createModal = true;
     }
-    
+
     public function saveCreate(): void
     {
         $this->validate([
             'newRoleName' => 'required|string|max:255',
         ]);
-        
+
         Role::create(['name' => $this->newRoleName]);
-        
+
         logActivity('created', $this->newRoleName . ' ditambahkan');
         $this->createModal = false;
         $this->success('Role created successfully.', position: 'toast-top');
     }
-    
+
     public function edit($id): void
     {
         $this->editingRole = Role::find($id);
-        
+
         if ($this->editingRole) {
             $this->editingName = $this->editingRole->name;
             $this->editModal = true; // Tampilkan modal
         }
     }
-    
+
     public function saveEdit(): void
     {
         if ($this->editingRole) {
@@ -173,7 +179,7 @@ new class extends Component {
                 <span>{{ $role->users_count }}</span>
             @endscope
             @scope('actions', $roles)
-                <x-button icon="o-trash" wire:click="delete({{ $roles['id'] }})"
+                <x-button icon="o-trash" wire:click.stop="delete({{ $roles['id'] }})"
                     wire:confirm="Yakin ingin menghapus {{ $roles['name'] }}?" spinner
                     class="btn-ghost btn-sm text-red-500" />
             @endscope

@@ -31,13 +31,15 @@ Route::get('/logout', function () {
 // 🔐 AUTHENTICATED ROUTES
 // ======================
 Route::middleware('auth')->group(function () {
-
+    
     // 📧 EMAIL VERIFICATION
+    Volt::route('/profile', 'auth.ubahprofile');
     Volt::route('/email/verify', 'auth.verify-email')->middleware('throttle:6,1')->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
         return redirect('/')->with('success', 'Email berhasil diverifikasi!');
     })->middleware('signed')->name('verification.verify');
+
 
     Volt::route('/', 'index');
 
@@ -68,7 +70,7 @@ Route::middleware('auth')->group(function () {
     // ======================
     // 🛡️ KASIR ROUTES - barang masuk & keluar
     // ======================
-    Route::middleware('role:1,3')->group(function () {
+    Route::middleware('role:1,2')->group(function () {
         Volt::route('/barangmasuks', 'barangmasuks.index');
         Volt::route('/barangmasuks/create', 'barangmasuks.create');
         Volt::route('/barangmasuks/{masuk}/edit', 'barangmasuks.edit');

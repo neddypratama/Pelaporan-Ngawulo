@@ -120,8 +120,8 @@ new class extends Component {
     <!-- HEADER -->
     <x-header title="Barang Masuks" separator progress-indicator>
         <x-slot:actions>
-            <x-button label="Create" link="/barangmasuks/create" responsive icon="o-plus" class="btn-primary" />
-            <x-button label="Export" wire:click="$set('showExportModal', true)" icon="o-arrow-down-tray"
+            <x-button spinner label="Create" link="/barangmasuks/create" responsive icon="o-plus" class="btn-primary" />
+            <x-button spinner label="Export" wire:click="$set('showExportModal', true)" icon="o-arrow-down-tray"
                 class="btn-secondary" responsive />
         </x-slot:actions>
     </x-header>
@@ -136,7 +136,7 @@ new class extends Component {
                 class="" />
         </div>
         <div class="md:col-span-1 flex">
-            <x-button label="Filters" @click="$wire.drawer=true" icon="o-funnel" badge="{{ $filter }}"
+            <x-button spinner label="Filters" @click="$wire.drawer=true" icon="o-funnel" badge="{{ $filter }}"
                 class="" responsive />
         </div>
         <!-- Dropdown untuk jumlah data per halaman -->
@@ -147,7 +147,7 @@ new class extends Component {
         <x-table :headers="$headers" :rows="$masuks" :sort-by="$sortBy" with-pagination
             link="barangmasuks/{id}/edit?tanggal={tanggal}&barang={barang.name}">
             @scope('actions', $masuks)
-                <x-button icon="o-trash" wire:click="delete({{ $masuks['id'] }})"
+                <x-button spinner icon="o-trash" wire:click="delete({{ $masuks['id'] }})"
                     wire:confirm="Yakin ingin menghapus {{ $masuks['name'] }}?" spinner
                     class="btn-ghost btn-sm text-red-500" />
             @endscope
@@ -155,7 +155,7 @@ new class extends Component {
     </x-card>
 
     <!-- FILTER DRAWER -->
-    <x-drawer wire:model="drawer" title="Filters" right separator with-close-button class="lg:w-1/3">
+    <x-drawer wire:model="drawer" title="Filters" right separator with-close-button spinner class="lg:w-1/3">
         <div class="grid gap-5">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
             <x-select placeholder="Barang" wire:model.live="barang_id" :options="$barang" icon="o-flag"
@@ -164,8 +164,8 @@ new class extends Component {
         </div>
 
         <x-slot:actions>
-            <x-button label="Reset" icon="o-x-mark" wire:click="clear" spinner />
-            <x-button label="Done" icon="o-check" class="btn-primary" @click="$wire.drawer=false" />
+            <x-button spinner label="Reset" icon="o-x-mark" wire:click="clear" spinner />
+            <x-button spinner label="Done" icon="o-check" class="btn-primary" @click="$wire.drawer=false" />
         </x-slot:actions>
     </x-drawer>
 
@@ -184,8 +184,8 @@ new class extends Component {
         </div>
 
         <x-slot:actions>
-            <x-button label="Batal" @click="$set('showExportModal', false)" />
-            <x-button label="Export" wire:click="export" spinner class="btn-primary" />
+            <x-button spinner label="Batal" @click="$set('showExportModal', false)" />
+            <x-button spinner label="Export" wire:click="export" spinner class="btn-primary" />
         </x-slot:actions>
     </x-modal>
 </div>

@@ -37,11 +37,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Role::class);
     }
 
-    public function transaksi(): HasMany
-    {
-        return $this->hasMany(Transaksi::class);
-    }
-
     // public function country(): BelongsTo
     // {
     //     return $this->belongsTo(Country::class);

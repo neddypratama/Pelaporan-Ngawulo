@@ -48,6 +48,12 @@ new class extends Component {
     public function delete($id): void
     {
         $Satuan = Satuan::findOrFail($id);
+
+        // Cek apakah barang masih dipakai di tabel barang_keluars
+        if ($Satuan->barangs()->exists()) {
+            $this->error("Satuan \"$Satuan->name\" tidak dapat dihapus karena sudah digunakan dalam data barang.", position: 'toast-top');
+            return;
+        }
         
         logActivity('deleted', 'Menghapus data satuan ' . $Satuan->name);
         $Satuan->delete();
@@ -154,7 +160,7 @@ new class extends Component {
     <!-- HEADER -->
     <x-header title="Satuans" separator progress-indicator>
         <x-slot:actions>
-            <x-button label="Create" @click="$wire.create()" responsive icon="o-plus" class="btn-primary" />
+            <x-button spinner label="Create" @click="$wire.create()" responsive icon="o-plus" class="btn-primary" />
         </x-slot:actions>
     </x-header>
 
@@ -168,7 +174,7 @@ new class extends Component {
                 class="" />
         </div>
         <div class="md:col-span-1 flex">
-            <x-button label="Filters" @click="$wire.drawer=true" icon="o-funnel" badge="{{ $filter }}"
+            <x-button spinner label="Filters" @click="$wire.drawer=true" icon="o-funnel" badge="{{ $filter }}"
                 class="" responsive/>
         </div>
         <!-- Dropdown untuk jumlah data per halaman -->
@@ -182,7 +188,7 @@ new class extends Component {
                 <span>{{ $Satuan->barangs_count }}</span>
             @endscope
             @scope('actions', $Satuan)
-                <x-button icon="o-trash" wire:click="delete({{ $Satuan['id'] }})"
+                <x-button spinner icon="o-trash" wire:click="delete({{ $Satuan['id'] }})"
                     wire:confirm="Yakin ingin menghapus {{ $Satuan['name'] }}?" spinner
                     class="btn-ghost btn-sm text-red-500" />
             @endscope
@@ -195,8 +201,8 @@ new class extends Component {
         </div>
 
         <x-slot:actions>
-            <x-button label="Cancel" icon="o-x-mark" @click="$wire.createModal=false" />
-            <x-button label="Save" icon="o-check" class="btn-primary" wire:click="saveCreate" />
+            <x-button spinner label="Cancel" icon="o-x-mark" @click="$wire.createModal=false" />
+            <x-button spinner label="Save" icon="o-check" class="btn-primary" wire:click="saveCreate" />
         </x-slot:actions>
     </x-modal>
 
@@ -206,13 +212,13 @@ new class extends Component {
         </div>
 
         <x-slot:actions>
-            <x-button label="Cancel" icon="o-x-mark" @click="$wire.editModal=false" />
-            <x-button label="Save" icon="o-check" class="btn-primary" wire:click="saveEdit" />
+            <x-button spinner label="Cancel" icon="o-x-mark" @click="$wire.editModal=false" />
+            <x-button spinner label="Save" icon="o-check" class="btn-primary" wire:click="saveEdit" />
         </x-slot:actions>
     </x-modal>
 
     <!-- FILTER DRAWER -->
-    <x-drawer wire:model="drawer" title="Filters" right separator with-close-button class="lg:w-1/3">
+    <x-drawer wire:model="drawer" title="Filters" right separator with-close-button spinner class="lg:w-1/3">
         <div class="grid gap-5">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
             {{-- <x-select placeholder="Country" wire:model.live="country_id" :options="$countries" icon="o-flag"
@@ -220,8 +226,8 @@ new class extends Component {
         </div>
 
         <x-slot:actions>
-            <x-button label="Reset" icon="o-x-mark" wire:click="clear" spinner />
-            <x-button label="Done" icon="o-check" class="btn-primary" @click="$wire.drawer=false" />
+            <x-button spinner label="Reset" icon="o-x-mark" wire:click="clear" spinner />
+            <x-button spinner label="Done" icon="o-check" class="btn-primary" @click="$wire.drawer=false" />
         </x-slot:actions>
     </x-drawer>
 </div>

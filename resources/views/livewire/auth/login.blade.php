@@ -18,10 +18,10 @@ new #[Layout('components.layouts.empty')] #[Title('Login')] class
     {
         if (auth()->check()) {
             $user = auth()->user();
-            if ($user->role_id === 4) {
-                return redirect('/');
+            if ($user->role_id === 4 || $user->role_id === 3) {
+                return redirect('/login');
             } else {
-                return redirect('/dashboard');
+                return redirect('/');
             }
         }
     }
@@ -40,10 +40,10 @@ new #[Layout('components.layouts.empty')] #[Title('Login')] class
 
             $user = auth()->user();
 
-            if ($user->role_id === 4) {
-                return redirect('/');
+            if ($user->role_id === 4 || $user->role_id === 3) {
+                return redirect('/login');
             } else {
-                return redirect('/dashboard');
+                return redirect('/');
             }
         }
 
@@ -68,14 +68,14 @@ new #[Layout('components.layouts.empty')] #[Title('Login')] class
             <x-button label="Lupa Password" class="" link="/forgot-password" />
         </div>
         <x-slot:actions class="flex justify-between">
-            <x-button label="Create an account" class="btn-secondary" link="/register" />
+            {{-- <x-button label="Create an account" class="btn-secondary" link="/register" /> --}}
             <x-button label="Login" type="submit" icon="o-paper-airplane" class="btn-primary" spinner="login" />
         </x-slot:actions>
-        <hr>
-        <a href="{{ route('google-redirect') }}"
+        {{-- <hr> --}}
+        {{-- <a href="{{ route('google-redirect') }}"
             class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-yellow-500 rounded hover:bg-yellow-600">
             <i class="fa-brands fa-google mr-2"></i>
             Login dengan Google
-        </a>
+        </a> --}}
     </x-form>
 </div>

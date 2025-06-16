@@ -45,17 +45,25 @@ new class extends Component {
     public function delete($id): void
     {
         $barang = Barang::findOrFail($id);
+
+        // Cek apakah barang masih dipakai di tabel barang_keluars
+        if ($barang->barangkeluars()->exists()) {
+            $this->error("Barang \"$barang->name\" tidak dapat dihapus karena sudah digunakan dalam data keluar.", position: 'toast-top');
+            return;
+        }
+
         logActivity('deleted', 'Menghapus data barang ' . $barang->name);
         $barang->delete();
-        $this->warning("Barang $barang->name akan dihapus", position: 'toast-top');
+
+        $this->warning("Barang \"$barang->name\" telah dihapus", position: 'toast-top');
     }
-    
+
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         logActivity('export', 'Mencetak data barang');
         return Excel::download(new BarangsExport(), 'barangs.xlsx');
     }
-    
+
     // Table headers
     public function headers(): array
     {
@@ -121,8 +129,9 @@ new class extends Component {
     <x-header title="Barangs" separator progress-indicator>
         <x-slot:actions>
             <div class="flex gap-2">
-                <x-button label="Create" link="/barangs/create" responsive icon="o-plus" class="btn-primary" />
-                <x-button label="Export" wire:click="export" icon="o-arrow-down-tray" class="btn-secondary" responsive />
+                <x-button spinner label="Create" link="/barangs/create" responsive icon="o-plus" class="btn-primary" />
+                <x-button spinner label="Export" wire:click="export" icon="o-arrow-down-tray" class="btn-secondary"
+                    responsive />
             </div>
         </x-slot:actions>
     </x-header>
@@ -137,7 +146,7 @@ new class extends Component {
                 class="" />
         </div>
         <div class="md:col-span-1 flex">
-            <x-button label="Filters" @click="$wire.drawer=true" icon="o-funnel" badge="{{ $filter }}"
+            <x-button spinner label="Filters" @click="$wire.drawer=true" icon="o-funnel" badge="{{ $filter }}"
                 class="" responsive />
         </div>
         <!-- Dropdown untuk jumlah data per halaman -->
@@ -149,7 +158,7 @@ new class extends Component {
             link="barangs/{id}/edit?name={name}&jenisbarangs={jenis.name}">
             @scope('actions', $barangs)
                 @if (auth()->user()->role_id != 3)
-                    <x-button icon="o-trash" wire:click="delete({{ $barangs['id'] }})"
+                    <x-button spinner icon="o-trash" wire:click="delete({{ $barangs['id'] }})"
                         wire:confirm="Yakin ingin menghapus {{ $barangs['name'] }}?" spinner
                         class="btn-ghost btn-sm text-red-500" />
                 @endif
@@ -158,7 +167,7 @@ new class extends Component {
     </x-card>
 
     <!-- FILTER DRAWER -->
-    <x-drawer wire:model="drawer" title="Filters" right separator with-close-button class="lg:w-1/3">
+    <x-drawer wire:model="drawer" title="Filters" right separator with-close-button spinner class="lg:w-1/3">
         <div class="grid gap-5">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
             <x-select placeholder="Jenis Barang" wire:model.live="jenis_id" :options="$jenis" icon="o-flag"
@@ -170,8 +179,8 @@ new class extends Component {
         </div>
 
         <x-slot:actions>
-            <x-button label="Reset" icon="o-x-mark" wire:click="clear" spinner />
-            <x-button label="Done" icon="o-check" class="btn-primary" @click="$wire.drawer=false" />
+            <x-button spinner label="Reset" icon="o-x-mark" wire:click="clear" spinner />
+            <x-button spinner label="Done" icon="o-check" class="btn-primary" @click="$wire.drawer=false" />
         </x-slot:actions>
     </x-drawer>
 </div>

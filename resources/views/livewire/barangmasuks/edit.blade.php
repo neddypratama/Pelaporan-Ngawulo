@@ -107,7 +107,7 @@ new class extends Component {
         {{--  Basic section  --}}
         <div class="lg:grid grid-cols-5">
             <div class="col-span-2">
-                <x-header title="Basic" subtitle="Basic info from user" size="text-2xl" />
+                <x-header title="Basic" subtitle="Basic info from barang masuk" size="text-2xl" />
             </div>
 
             <div class="col-span-3 grid gap-3">
@@ -123,7 +123,7 @@ new class extends Component {
 
         <div class="lg:grid grid-cols-5">
             <div class="col-span-2">
-                <x-header title="Details" subtitle="More about the menu" size="text-2xl" />
+                <x-header title="Details" subtitle="More about the barang masuk" size="text-2xl" />
             </div>
             <div class="col-span-3 grid gap-3">
                 <x-input label="Stok Sebelumnya" wire:model.live="stoklama" type="number" min="1" readonly />

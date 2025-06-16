@@ -26,8 +26,6 @@ class RoleSeeder extends Seeder
                 'updated_at' => Carbon::now()->subDays(rand(0, 30)),],
             ['name' => 'Kasir', 'created_at' => Carbon::now()->subDays(rand(0, 30)),
                 'updated_at' => Carbon::now()->subDays(rand(0, 30)),],
-            ['name' => 'Pembeli', 'created_at' => Carbon::now()->subDays(rand(0, 30)),
-                'updated_at' => Carbon::now()->subDays(rand(0, 30)),],
         ]);
     }
 }

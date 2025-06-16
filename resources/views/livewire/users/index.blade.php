@@ -7,6 +7,8 @@ use Mary\Traits\Toast;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
+
 
 new class extends Component {
     use Toast;
@@ -39,34 +41,37 @@ new class extends Component {
     public function delete($id): void
     {
         $user = User::findOrFail($id);
-        if ($user->avatar && file_exists(public_path($user->avatar))) {
-            unlink(public_path($user->avatar));
+
+        // Cegah jika user yang akan dihapus adalah user yang sedang login
+        if (Auth::id() === $user->id) {
+            $this->error(title: "User \"$user->name\" tidak dapat menghapus dirinya sendiri.", position: 'toast-top');
+            return;
         }
-        logActivity('deleted', 'Menghapus data user ' . $user->name);
-        $user->delete();
-        $this->warning("User $user->name akan dihapus", position: 'toast-top');
+
+        try {
+            // Hapus file avatar jika ada
+            if ($user->avatar && file_exists(public_path($user->avatar))) {
+                unlink(public_path($user->avatar));
+            }
+
+            logActivity('deleted', 'Menghapus data user ' . $user->name);
+            $user->delete();
+
+            $this->warning(title: "User \"$user->name\" telah dihapus", position: 'toast-top');
+        } catch (\Exception $e) {
+            $this->error(title: 'Gagal menghapus user.', position: 'toast-top');
+        }
     }
 
     // Table headers
     public function headers(): array
     {
-        return [
-            ['key' => 'avatar', 'label' => '', 'class' => 'w-1'], 
-            ['key' => 'id', 'label' => '#', 'class' => 'w-1'], 
-            ['key' => 'role_name', 'label' => 'Role'], 
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'], 
-            ['key' => 'no_hp', 'label' => 'No Telepon', 'sortable' => false],
-            ['key' => 'email', 'label' => 'E-mail', 'sortable' => false]];
+        return [['key' => 'avatar', 'label' => '', 'class' => 'w-1'], ['key' => 'id', 'label' => '#', 'class' => 'w-1'], ['key' => 'role_name', 'label' => 'Role'], ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'], ['key' => 'no_hp', 'label' => 'No Telepon', 'sortable' => false], ['key' => 'email', 'label' => 'E-mail', 'sortable' => false]];
     }
 
     public function users(): LengthAwarePaginator
     {
-        return User::query()
-        ->withAggregate('role', 'name')
-        ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
-        ->when($this->role_id, fn(Builder $q) => $q->where('role_id', $this->role_id))
-        ->orderBy(...array_values($this->sortBy))
-        ->paginate($this->perPage);
+        return User::query()->withAggregate('role', 'name')->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))->when($this->role_id, fn(Builder $q) => $q->where('role_id', $this->role_id))->orderBy(...array_values($this->sortBy))->paginate($this->perPage);
     }
 
     public function with(): array

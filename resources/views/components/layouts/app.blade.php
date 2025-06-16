@@ -60,9 +60,10 @@
                                     <x-button icon="fas.gear" class="btn-circle btn-ghost" />
                                 </x-slot:trigger>
 
-                                <div class="grid grid-rows-2 grid-flow-col gap-4">
+                                <div class="grid grid-rows-3 grid-flow-col gap-4">
                                     <x-button label="Logout" icon="o-power" link="/logout" responsive />
                                     <x-theme-toggle class="btn" label="Theme" responsive />
+                                    <x-button label="Profil" icon="o-user" link="/profile" responsive />
                                 </div>
                             </x-dropdown>
                         </x-slot:actions>
@@ -90,7 +91,7 @@
                             <x-menu-item title="Barang Keluar" icon="fas.arrow-up" link="/barangkeluars" />
                         </x-menu-sub>
                     @endif
-
+                    
                     @if (auth()->user()->role_id == 2)
                         {{-- Manager: hanya Data Master --}}
                         <x-menu-sub title="Data Master" icon="fas.database">
@@ -99,14 +100,15 @@
                             <x-menu-item title="Satuan Barang" icon="fas.balance-scale" link="/satuans" />
                         </x-menu-sub>
                     @endif
-
-                    @if (auth()->user()->role_id == 3)
+                    
+                    @if (in_array(auth()->user()->role_id, [2, 3]))
                         {{-- Kasir: hanya Transaksi --}}
                         <x-menu-sub title="Transaksi" icon="fas.exchange-alt">
                             <x-menu-item title="Barang Masuk" icon="fas.arrow-down" link="/barangmasuks" />
                             <x-menu-item title="Barang Keluar" icon="fas.arrow-up" link="/barangkeluars" />
                         </x-menu-sub>
                     @endif
+
                 @endif
             </x-menu>
         </x-slot:sidebar>
