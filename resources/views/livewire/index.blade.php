@@ -306,7 +306,10 @@ new class extends Component {
 <div>
     <x-header title="Dashboard" separator progress-indicator />
 
-    <!-- Grid untuk Kartu Data -->
+    @if (auth()->user()->role_id == 4)
+        
+    @else
+        <!-- Grid untuk Kartu Data -->
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-6">
         <x-card class="rounded-lg shadow p-6">
             <div class="flex items-center gap-4">
@@ -410,4 +413,5 @@ new class extends Component {
             @endscope
         </x-table>
     </x-card>
+    @endif
 </div>

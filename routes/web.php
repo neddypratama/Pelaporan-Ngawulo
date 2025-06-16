@@ -40,9 +40,7 @@ Route::middleware('auth')->group(function () {
         return redirect('/')->with('success', 'Email berhasil diverifikasi!');
     })->middleware('signed')->name('verification.verify');
 
-    Route::middleware('role:1,2,3')->group(function () {
         Volt::route('/', 'index');
-    }); 
 
     // ======================
     // 🛡️ ADMIN ROUTES - akses penuh
