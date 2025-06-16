@@ -18,7 +18,7 @@ new class extends Component {
     public string $kode = '';
 
     #[Rule('required|integer|min:1')]
-    public int $jumlah = 0;
+    public ?int $jumlah = 0;
 
     #[Rule('required|sometimes')]
     public ?int $barang_id = null;
