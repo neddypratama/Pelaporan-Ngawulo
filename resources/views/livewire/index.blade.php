@@ -435,27 +435,27 @@ new class extends Component {
     </x-header>
 
     @if (auth()->user()->role_id == 1 || auth()->user()->role_id == 2)
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
-            <x-card class="grid col-span-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <x-card class="grid col-span-2">
                 <x-slot:title>Pendapatan Penjualan</x-slot:title>
                 <x-chart wire:model="myChart" />
             </x-card>
 
-            <x-card class="grid col-span-2">
+            <x-card class="grid col-span-1">
                 <x-slot:title>Penjualan Menu</x-slot:title>
                 <x-chart wire:model="categoryChart" />
             </x-card>
-            <x-card class="grid col-span-2">
+            <x-card class="grid col-span-1">
                 <x-slot:title>Rating Menu</x-slot:title>
                 <x-chart wire:model="ratingChart" />
             </x-card>
-            <x-card class="grid col-span-4">
+            <x-card class="grid col-span-2">
                 <x-slot:title>Stok Barang</x-slot:title>
                 <x-chart wire:model="stokChart" />
             </x-card>
 
             <!-- Barang Masuk Chart -->
-            <x-card class="grid col-span-2">
+            <x-card class="grid col-span-1">
                 <x-slot:title>Barang Masuk</x-slot:title>
                 <x-slot:menu>
                     <x-select wire:model.live="selectedMasuk" :options="$barangs" prefix="Nama Barang"
@@ -465,7 +465,7 @@ new class extends Component {
             </x-card>
 
             <!-- Barang Keluar Chart -->
-            <x-card class="grid col-span-2">
+            <x-card class="grid col-span-1">
                 <x-slot:title>Barang Keluar</x-slot:title>
                 <x-slot:menu>
                     <x-select wire:model.live="selectedKeluar" :options="$barangs" prefix="Nama Barang"
