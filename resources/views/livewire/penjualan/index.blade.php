@@ -167,6 +167,9 @@ new class extends Component {
     <!-- TABLE wire:poll.5s="users"  -->
     <x-card>
         <x-table :headers="$headers" :rows="$transaksi" :sort-by="$sortBy" with-pagination>
+            @scope('cell_user_name', $transaksi)
+                {{ $transaksi['user_name'] ?? ($transaksi['guest_name'] ?? '-') }}
+            @endscope
             @scope('cell_status', $transaksi)
                 @php
                     $colors = [
