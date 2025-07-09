@@ -196,7 +196,6 @@ new class extends Component {
     <!-- HEADER -->
     <x-header title="Ratings" separator progress-indicator>
         <x-slot:actions>
-            <x-button spinner label="Create" @click="$wire.create()" responsive icon="o-plus" class="btn-primary" />
             <x-button spinner label="Export" wire:click="export" icon="o-arrow-down-tray" class="btn-secondary" responsive />
         </x-slot:actions>
     </x-header>
