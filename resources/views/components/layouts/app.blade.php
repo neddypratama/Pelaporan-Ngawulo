@@ -79,6 +79,9 @@
                             <x-menu-item title="Users" icon="fas.user" link="/users" />
                             <x-menu-item title="Roles" icon="fas.user-shield" link="/roles" />
                         </x-menu-sub>
+                    @endif
+
+                    @if (in_array(auth()->user()->role_id, [1, 2]))
                         <x-menu-sub title="Pelaporan" icon="fas.file-export">
                             <x-menu-item title="Laporan Penjualan" icon="fas.cart-shopping" link="/penjualan" />
                             <x-menu-item title="Laporan Menu" icon="fas.pizza-slice" link="/menu" />
