@@ -79,36 +79,16 @@
                             <x-menu-item title="Users" icon="fas.user" link="/users" />
                             <x-menu-item title="Roles" icon="fas.user-shield" link="/roles" />
                         </x-menu-sub>
-
-                        <x-menu-sub title="Data Master" icon="fas.database">
-                            <x-menu-item title="Data Barang" icon="fas.box" link="/barangs" />
-                            <x-menu-item title="Jenis Barang" icon="fas.tags" link="/jenisbarangs" />
-                            <x-menu-item title="Satuan Barang" icon="fas.balance-scale" link="/satuans" />
-                        </x-menu-sub>
-
-                        <x-menu-sub title="Transaksi" icon="fas.exchange-alt">
-                            <x-menu-item title="Barang Masuk" icon="fas.arrow-down" link="/barangmasuks" />
-                            <x-menu-item title="Barang Keluar" icon="fas.arrow-up" link="/barangkeluars" />
+                        <x-menu-sub title="Pelaporan" icon="fas.file-export">
+                            <x-menu-item title="Laporan Penjualan" icon="fas.cart-shopping" link="/penjualan" />
+                            <x-menu-item title="Laporan Menu" icon="fas.pizza-slice" link="/menu" />
+                            <x-menu-item title="Laporan Rating" icon="fas.star" link="/rating" />
+                            <x-menu-item title="Laporan Customer" icon="fas.user" link="/customer" />
+                            <x-menu-item title="Laporan Barang" icon="fas.box" link="/barang" />
+                            <x-menu-item title="Laporan Stok Masuk" icon="fas.arrow-down" link="/stokmasuk" />
+                            <x-menu-item title="Laporan Stok Keluar" icon="fas.arrow-up" link="/stokkeluar" />
                         </x-menu-sub>
                     @endif
-                    
-                    @if (auth()->user()->role_id == 2)
-                        {{-- Manager: hanya Data Master --}}
-                        <x-menu-sub title="Data Master" icon="fas.database">
-                            <x-menu-item title="Data Barang" icon="fas.box" link="/barangs" />
-                            <x-menu-item title="Jenis Barang" icon="fas.tags" link="/jenisbarangs" />
-                            <x-menu-item title="Satuan Barang" icon="fas.balance-scale" link="/satuans" />
-                        </x-menu-sub>
-                    @endif
-                    
-                    @if (in_array(auth()->user()->role_id, [2, 3]))
-                        {{-- Kasir: hanya Transaksi --}}
-                        <x-menu-sub title="Transaksi" icon="fas.exchange-alt">
-                            <x-menu-item title="Barang Masuk" icon="fas.arrow-down" link="/barangmasuks" />
-                            <x-menu-item title="Barang Keluar" icon="fas.arrow-up" link="/barangkeluars" />
-                        </x-menu-sub>
-                    @endif
-
                 @endif
             </x-menu>
         </x-slot:sidebar>

@@ -104,25 +104,13 @@ Route::middleware('auth')->group(function () {
     // 🛡️ MANAGER ROUTES - barang, satuan, jenis
     // ======================
     Route::middleware('role:1,2')->group(function () {
-        Volt::route('/satuans', 'satuans.index');
-        Volt::route('/jenisbarangs', 'jenisbarangs.index');
+        Volt::route('/penjualan', 'penjualan.index');
+        Volt::route('/menu', 'menu.index');
+        Volt::route('/rating', 'rating.index');
+        Volt::route('/customer', 'customer.index');
 
-        Volt::route('/barangs', 'barangs.index');
-        Volt::route('/barangs/create', 'barangs.create');
-        Volt::route('/barangs/{barang}/edit', 'barangs.edit');
+        Volt::route('/barang', 'barang.index');
+        Volt::route('/stokmasuk', 'stokmasuk.index');
+        Volt::route('/stokkeluar', 'stokkeluar.index');
     });
-
-    // ======================
-    // 🛡️ KASIR ROUTES - barang masuk & keluar
-    // ======================
-    Route::middleware('role:1,2')->group(function () {
-        Volt::route('/barangmasuks', 'barangmasuks.index');
-        Volt::route('/barangmasuks/create', 'barangmasuks.create');
-        Volt::route('/barangmasuks/{masuk}/edit', 'barangmasuks.edit');
-
-        Volt::route('/barangkeluars', 'barangkeluars.index');
-        Volt::route('/barangkeluars/create', 'barangkeluars.create');
-        Volt::route('/barangkeluars/{keluar}/edit', 'barangkeluars.edit');
-    });
-
 });

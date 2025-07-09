@@ -1,15 +1,14 @@
 <?php
 
-use App\Models\Barang;
-use App\Models\Satuan;
-use App\Models\JenisBarang;
+use App\Models\Menu;
+use App\Models\Kategori;
 use Livewire\Volt\Component;
 use Mary\Traits\Toast;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\BarangsExport;
+use App\Exports\MenuExport;
 
 new class extends Component {
     use Toast;
@@ -22,8 +21,7 @@ new class extends Component {
     public array $sortBy = ['column' => 'id', 'direction' => 'asc'];
 
     // Create a public property.
-    public int $jenis_id = 0;
-    public int $satuan_id = 0;
+    public int $kategori_id = 0;
 
     public int $filter = 0;
 
@@ -44,40 +42,44 @@ new class extends Component {
     // Delete action
     public function delete($id): void
     {
-        $barang = Barang::findOrFail($id);
+        $menu = Menu::findOrFail($id);
 
-        // Cek apakah barang masih dipakai di tabel barang_keluars
-        if ($barang->barangkeluars()->exists()) {
-            $this->error("Barang \"$barang->name\" tidak dapat dihapus karena sudah digunakan dalam data keluar.", position: 'toast-top');
+        // Cek apakah menu memiliki relasi di tabel transaksis
+        if ($menu->cart()->exists() ) {
+            $this->error(title: "Menu \"$menu->name\" tidak dapat dihapus karena masih memiliki data cart.", position: 'toast-top');
+            return;
+        } elseif ($menu->ratings()->exists()) {
+            $this->error(title: "Menu \"$menu->name\" tidak dapat dihapus karena masih memiliki data rating.", position: 'toast-top');
             return;
         }
 
-        logActivity('deleted', 'Menghapus data barang ' . $barang->name);
-        $barang->delete();
+        // Jika tidak ada relasi, lanjutkan penghapusan
+        try {
+            if ($menu->photo && file_exists(public_path($menu->photo))) {
+                unlink(public_path($menu->photo));
+            }
 
-        $this->warning("Barang \"$barang->name\" telah dihapus", position: 'toast-top');
-    }
+            logActivity('deleted', 'Menghapus data menu ' . $menu->name);
+            $menu->delete();
 
-    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
-    {
-        logActivity('export', 'Mencetak data barang');
-        return Excel::download(new BarangsExport(), 'barangs.xlsx');
+            $this->warning(title: "Menu $menu->name telah dihapus", position: 'toast-top');
+        } catch (\Exception $e) {
+            $this->error(title: 'Gagal menghapus menu.', position: 'toast-top');
+        }
     }
 
     // Table headers
     public function headers(): array
     {
-        return [['key' => 'id', 'label' => '#', 'class' => 'w-1'], ['key' => 'kode', 'label' => 'Kode'], ['key' => 'jenis_name', 'label' => 'Jenis Barang'], ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'], ['key' => 'stok', 'label' => 'Stok'], ['key' => 'satuan_name', 'label' => 'Satuan']];
+        return [['key' => 'avatar', 'label' => '', 'class' => 'w-1'], ['key' => 'id', 'label' => '#', 'class' => 'w-1'], ['key' => 'kategori_name', 'label' => 'Kategori'], ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'], ['key' => 'price', 'label' => 'Harga'], ['key' => 'stok', 'label' => 'Stok']];
     }
 
-    public function barangs(): LengthAwarePaginator
+    public function menus(): LengthAwarePaginator
     {
-        return Barang::query()
-            ->withAggregate('jenis', 'name')
-            ->withAggregate('satuan', 'name')
+        return Menu::query()
+            ->withAggregate('kategori', 'name')
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
-            ->when($this->jenis_id, fn(Builder $q) => $q->where('jenis_id', $this->jenis_id))
-            ->when($this->satuan_id, fn(Builder $q) => $q->where('satuan_id', $this->satuan_id))
+            ->when($this->kategori_id, fn(Builder $q) => $q->where('kategori_id', $this->kategori_id))
             ->when($this->stokFilter === 1, fn(Builder $q) => $q->where('stok', '<', 10))
             ->when($this->stokFilter === 2, fn(Builder $q) => $q->where('stok', '>=', 10))
             ->orderBy(...array_values($this->sortBy))
@@ -92,10 +94,7 @@ new class extends Component {
             } else {
                 $this->filter = 0;
             }
-            if (!$this->jenis_id == 0) {
-                $this->filter += 1;
-            }
-            if (!$this->satuan_id == 0) {
+            if (!$this->kategori_id == 0) {
                 $this->filter += 1;
             }
             if (!$this->stokFilter == 0) {
@@ -103,10 +102,9 @@ new class extends Component {
             }
         }
         return [
-            'barangs' => $this->barangs(),
+            'menus' => $this->menus(),
             'headers' => $this->headers(),
-            'jenis' => JenisBarang::all(),
-            'satuan' => Satuan::all(),
+            'kategori' => Kategori::all(),
             'perPage' => $this->perPage,
             'pages' => $this->page,
             'stokFilters' => [['id' => 0, 'name' => 'Semua'], ['id' => 1, 'name' => 'Stok dibawah minimum'], ['id' => 2, 'name' => 'Stok diatas minimum']],
@@ -120,20 +118,24 @@ new class extends Component {
             $this->resetPage();
         }
     }
+
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        logActivity('export', 'Mencetak data customer');
+        return Excel::download(new MenuExport(), 'menus.xlsx');
+    }
 };
 
 ?>
 
 <div>
     <!-- HEADER -->
-    <x-header title="Barangs" separator progress-indicator>
-        <x-slot:actions>
-            <div class="flex gap-2">
-                <x-button spinner label="Create" link="/barangs/create" responsive icon="o-plus" class="btn-primary" />
-                <x-button spinner label="Export" wire:click="export" icon="o-arrow-down-tray" class="btn-secondary"
-                    responsive />
-            </div>
-        </x-slot:actions>
+    <x-header title="Menus" separator progress-indicator>
+        @if (auth()->user()->role_id != 3)
+            <x-slot:actions>
+                <x-button spinner label="Export" wire:click="export" icon="o-arrow-down-tray" class="btn-secondary" responsive />
+            </x-slot:actions>
+        @endif
     </x-header>
 
     <!-- FILTERS -->
@@ -154,14 +156,9 @@ new class extends Component {
 
     <!-- TABLE wire:poll.5s="users"  -->
     <x-card>
-        <x-table :headers="$headers" :rows="$barangs" :sort-by="$sortBy" with-pagination
-            link="barangs/{id}/edit?name={name}&jenisbarangs={jenis.name}">
-            @scope('actions', $barangs)
-                @if (auth()->user()->role_id != 3)
-                    <x-button spinner icon="o-trash" wire:click="delete({{ $barangs['id'] }})"
-                        wire:confirm="Yakin ingin menghapus {{ $barangs['name'] }}?" spinner
-                        class="btn-ghost btn-sm text-red-500" />
-                @endif
+        <x-table :headers="$headers" :rows="$menus" :sort-by="$sortBy" with-pagination>
+            @scope('cell_avatar', $menu)
+                <x-avatar image="{{ $menu->photo ?? '/empty-user.jpg' }}" class="!w-10" />
             @endscope
         </x-table>
     </x-card>
@@ -170,9 +167,7 @@ new class extends Component {
     <x-drawer wire:model="drawer" title="Filters" right separator with-close-button spinner class="lg:w-1/3">
         <div class="grid gap-5">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
-            <x-select placeholder="Jenis Barang" wire:model.live="jenis_id" :options="$jenis" icon="o-flag"
-                placeholder-value="0" />
-            <x-select placeholder="Satuan" wire:model.live="satuan_id" :options="$satuan" icon="o-flag"
+            <x-select placeholder="Kategori" wire:model.live="kategori_id" :options="$kategori" icon="o-flag"
                 placeholder-value="0" />
             <x-select label="" wire:model.live="stokFilter" :options="$stokFilters" icon="o-archive-box" />
 

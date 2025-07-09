@@ -120,7 +120,6 @@ new class extends Component {
     <!-- HEADER -->
     <x-header title="Barang Keluars" separator progress-indicator>
         <x-slot:actions>
-            <x-button spinner label="Create" link="/barangkeluars/create" responsive icon="o-plus" class="btn-primary" />
             <x-button spinner label="Export" wire:click="$set('showExportModal', true)" icon="o-arrow-down-tray"
                 class="btn-secondary" responsive />
         </x-slot:actions>
@@ -144,13 +143,7 @@ new class extends Component {
 
     <!-- TABLE wire:poll.5s="users"  -->
     <x-card>
-        <x-table :headers="$headers" :rows="$keluars" :sort-by="$sortBy" with-pagination
-            link="barangkeluars/{id}/edit?tanggal={tanggal}&barang={barang.name}">
-            @scope('actions', $keluars)
-                <x-button spinner icon="o-trash" wire:click="delete({{ $keluars['id'] }})"
-                    wire:confirm="Yakin ingin menghapus {{ $keluars['name'] }}?" spinner
-                    class="btn-ghost btn-sm text-red-500" />
-            @endscope
+        <x-table :headers="$headers" :rows="$keluars" :sort-by="$sortBy" with-pagination>
         </x-table>
     </x-card>
 

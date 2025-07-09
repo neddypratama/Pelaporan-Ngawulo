@@ -44,9 +44,9 @@ class UserSeeder extends Seeder
         ]);
         DB::table('users')->insert([
             'role_id' => 3,
-            'name' => 'kasir',
-            'bio' => 'Kasir',
-            'email' => 'kasir@gmail.com',
+            'name' => 'barista',
+            'bio' => 'barista',
+            'email' => 'barista@gmail.com',
             'no_hp' => '08' . mt_rand(1000000000, 9999999999),
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
@@ -54,5 +54,18 @@ class UserSeeder extends Seeder
             'created_at' => Carbon::now()->subDays(rand(0, 30)),
             'updated_at' => Carbon::now()->subDays(rand(0, 30)),
         ]);
+        DB::table('users')->insert([
+            'role_id' => 4,
+            'name' => 'pembeli',
+            'bio' => 'pembeli',
+            'email' => 'pembeli@gmail.com',
+            'no_hp' => '08' . mt_rand(1000000000, 9999999999),
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+            'remember_token' => Str::random(10),
+            'created_at' => Carbon::now()->subDays(rand(0, 30)),
+            'updated_at' => Carbon::now()->subDays(rand(0, 30)),
+        ]);
+        User::factory(count: 10)->create();
     }
 }
